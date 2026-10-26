@@ -97,17 +97,6 @@ Nathan Lenno
 Projeto: ST.08 Emulator
 Categoria: Experimental Web Emulation Interface
 
----
-
-🟢 ST.08 Emulator | PS2 Experimental
-
-Gaming Like a Beast. Building Beyond Limits.
-
-Uma interface experimental de emulação inspirada no PlayStation 2, desenvolvida com HTML, CSS e JavaScript, com foco em análise de arquivos, interface web e futura integração com um motor de emulação real.
-
-«Status: Experimental. A interface e o analisador básico de arquivos estão implementados. A emulação real de jogos de PS2 ainda não está integrada.»
-
----
 
 <p align="center">
   <strong>ST.08 EMULATOR</strong><br>
