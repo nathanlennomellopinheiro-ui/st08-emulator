@@ -8,22 +8,149 @@
 :root{--bg:#070b09;--green:#32ff58;--text:#edf3ef;--muted:#9aa9a0;--line:#203329}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:linear-gradient(#32ff5806 1px,transparent 1px),linear-gradient(90deg,#32ff5806 1px,transparent 1px),var(--bg);background-size:32px 32px;color:var(--text);font:14px/1.65 Consolas,"Courier New",monospace}
 a{color:inherit}.wrap{width:min(1120px,92%);margin:auto}header{position:sticky;top:0;z-index:2;background:#050907f2;border-bottom:1px solid var(--line)}.nav{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:22px;flex-wrap:wrap;padding:12px 0}.brand{font:bold 28px/1 Arial,sans-serif;letter-spacing:-2px;text-decoration:none}.brand b,h1 span{color:var(--green)}.brand small{display:block;font:10px Consolas,monospace;letter-spacing:7px;color:var(--muted);margin-top:5px}nav{display:flex;gap:18px;flex-wrap:wrap}nav a{font-size:11px;text-decoration:none;color:#c5d0c9}nav a:hover{color:var(--green)}.tag{color:var(--green);font-size:11px;letter-spacing:1px}
-.hero{border-bottom:1px solid var(--line);background:radial-gradient(ellipse at 75% 45%,#153122, #0b151080 35%,transparent 65%)}.hero-inner{min-height:390px;display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:30px;padding:50px 0}.eyebrow{color:var(--green);font-size:12px;letter-spacing:3px;text-transform:uppercase}h1{font:900 clamp(54px,8vw,92px)/.9 Arial,sans-serif;letter-spacing:-5px;margin:20px 0 8px}.subhead{font:bold clamp(20px,3vw,30px)/1.2 Arial,sans-serif;letter-spacing:8px}.intro{max-width:560px;color:#b8c5bc}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:25px}.btn{display:inline-block;padding:12px 16px;border:1px solid var(--green);color:var(--green);text-decoration:none;font-size:12px;font-weight:bold}.btn.primary{background:var(--green);color:#061008}.art{min-height:260px;display:grid;place-items:center;position:relative}.orb{width:min(260px,65vw);aspect-ratio:1;border:1px solid #28563a;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle,#32ff581f,transparent 65%);box-shadow:0 0 60px #32ff5810;position:relative}.orb:before,.orb:after{content:"";position:absolute;inset:18px;border:1px dashed #2b633d;border-radius:50%}.orb:after{inset:44px;border-style:solid}.chip{width:110px;height:110px;border:2px solid var(--green);display:grid;place-items:center;transform:rotate(45deg);background:#09130c}.chip span{transform:rotate(-45deg);font-size:28px;color:var(--green);font-weight:bold}.side{position:absolute;right:0;top:40%;border-left:3px solid var(--green);padding-left:12px;letter-spacing:3px;line-height:2;color:#c3d0c8;font-size:12px}
-.features{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-top:0}.feature{padding:22px 18px;border-right:1px solid var(--line);min-height:185px}.feature:last-child{border:0}.glyph{font-size:27px;color:var(--green)}h2{font-size:15px;letter-spacing:1px;margin:8px 0}.feature p,.about p{color:var(--muted);font-size:13px}.mini{color:var(--green);text-decoration:none;font-size:11px}.lower{display:grid;grid-template-columns:1.05fr 1fr .9fr;gap:24px;padding:32px 0}.panel{border:1px solid var(--line);background:#080e0acc}.panel-title{border-bottom:1px solid var(--line);color:var(--green);padding:10px 13px;font-size:12px}.terminal{padding:13px;font-size:12px;line-height:1.85;overflow-wrap:anywhere}.ok,.disclaimer{color:var(--green)!important}.meter-row{padding:10px 12px 0;font-size:10px;display:grid;grid-template-columns:1fr 1fr 28px;gap:8px;align-items:center}.meter{height:7px;background:#1c2820;border:1px solid #2b3a30}.meter i{display:block;height:100%;background:var(--green);width:0}.meter i.full{width:100%}.percent{text-align:right;color:#aebbb2}.notice{margin:15px 12px;padding:12px;border:1px solid var(--line);font-size:11px;color:var(--muted)}footer{border-top:1px solid var(--line);padding:23px 0;color:#829087;font-size:11px}.foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}.foot strong{color:var(--green);letter-spacing:2px}
+.hero{border-bottom:1px solid var(--line);background:radial-gradient(ellipse at 75% 45%,#153122, #0b151080 35%,transparent 65%)}.hero-inner{min-height:390px;display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:30px;padding:50px 0}.eyebrow{color:var(--green);font-size:12px;letter-spacing:3px;text-transform:uppercase}h1{font:900 clamp(54px,8vw,92px)/.9 Arial,sans-serif;letter-spacing:-5px;margin:20px 0 8px}.subhead{font:bold clamp(20px,3vw,30px)/1.2 Arial,sans-serif;letter-spacing:8px}.intro{max-width:560px;color:#b8c5bc}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:25px}.btn{display:inline-block;padding:12px 16px;border:1px solid var(--green);color:var(--green);text-decoration:none;font-size:12px;font-weight:bold;background:transparent;cursor:pointer;font-family:inherit}.btn.primary{background:var(--green);color:#061008}.btn:hover{filter:brightness(1.1)}.art{min-height:260px;display:grid;place-items:center;position:relative}.orb{width:min(260px,65vw);aspect-ratio:1;border:1px solid #28563a;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle,#32ff581f,transparent 65%);box-shadow:0 0 60px #32ff5810;position:relative}.orb:before,.orb:after{content:"";position:absolute;inset:18px;border:1px dashed #2b633d;border-radius:50%}.orb:after{inset:44px;border-style:solid}.chip{width:110px;height:110px;border:2px solid var(--green);display:grid;place-items:center;transform:rotate(45deg);background:#09130c}.chip span{transform:rotate(-45deg);font-size:28px;color:var(--green);font-weight:bold}.side{position:absolute;right:0;top:40%;border-left:3px solid var(--green);padding-left:12px;letter-spacing:3px;line-height:2;color:#c3d0c8;font-size:12px}
+.features{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-top:0}.feature{padding:22px 18px;border-right:1px solid var(--line);min-height:185px}.feature:last-child{border:0}.glyph{font-size:27px;color:var(--green)}h2{font-size:15px;letter-spacing:1px;margin:8px 0}.feature p,.about p{color:var(--muted);font-size:13px}.mini{color:var(--green);text-decoration:none;font-size:11px}.lower{display:grid;grid-template-columns:1.05fr 1fr .9fr;gap:24px;padding:32px 0}.panel{border:1px solid var(--line);background:#080e0acc;min-width:0}.panel-title{border-bottom:1px solid var(--line);color:var(--green);padding:10px 13px;font-size:12px}.terminal{padding:13px;font-size:12px;line-height:1.85;overflow-wrap:anywhere}.ok,.disclaimer{color:var(--green)!important}.meter-row{padding:10px 12px 0;font-size:10px;display:grid;grid-template-columns:1fr 1fr 28px;gap:8px;align-items:center}.meter{height:7px;background:#1c2820;border:1px solid #2b3a30}.meter i{display:block;height:100%;background:var(--green);width:0}.meter i.full{width:100%}.percent{text-align:right;color:#aebbb2}.notice{margin:15px 12px;padding:12px;border:1px solid var(--line);font-size:11px;color:var(--muted)}
+.loader{margin:0 0 32px;border:1px solid var(--line);background:#080e0acc}.loader-inner{padding:18px}.loader-desc{color:var(--muted);font-size:12px;margin-top:0}.file-drop{border:1px dashed #28563a;background:#09130c;padding:24px 16px;text-align:center;display:grid;justify-items:center;gap:8px}.file-drop:focus-within{outline:1px solid var(--green);outline-offset:3px}.file-input{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;clip-path:inset(50%)}.file-label{display:inline-block;padding:10px 14px;background:var(--green);color:#061008;font-weight:bold;font-size:12px;cursor:pointer}.file-label:hover{filter:brightness(1.1)}.file-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}.meta-cell{border:1px solid var(--line);padding:12px;min-width:0}.meta-label{font-size:10px;color:var(--muted);letter-spacing:1px}.meta-value{font-size:12px;overflow-wrap:anywhere;color:var(--text);margin-top:4px}.status-line{font-size:12px;padding:11px 12px;border:1px solid var(--line);margin-top:12px;color:var(--muted);overflow-wrap:anywhere}.status-line.good{color:var(--green);border-color:#28563a}.status-line.bad{color:#ff8d8d;border-color:#633030}.small-note{font-size:10px;color:var(--muted);margin:12px 0 0}
+footer{border-top:1px solid var(--line);padding:23px 0;color:#829087;font-size:11px}.foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}.foot strong{color:var(--green);letter-spacing:2px}
 @media(max-width:850px){.hero-inner{grid-template-columns:1fr;padding:42px 0 25px}.art{min-height:220px}.side{right:2%;top:8%}.features{grid-template-columns:repeat(2,1fr)}.feature:nth-child(2){border-right:0}.feature:nth-child(-n+2){border-bottom:1px solid var(--line)}.lower{grid-template-columns:1fr 1fr}.about{grid-column:1/-1;grid-row:1}}
+@media(max-width:600px){.file-meta{grid-template-columns:1fr}.meta-cell{padding:10px}.nav{align-items:flex-start}.tag{width:100%}}
 @media(max-width:520px){h1{letter-spacing:-3px}.subhead{letter-spacing:5px}.features,.lower{grid-template-columns:1fr}.feature{border-right:0;border-bottom:1px solid var(--line)}.feature:last-child{border-bottom:0}.about{grid-column:auto}}
 </style></head>
 <body>
-<header><div class="wrap nav"><a class="brand" href="#home">ST.<b>08</b><small>EMULATOR</small></a><nav><a href="#home">HOME</a><a href="#project">PROJECT</a><a href="#features">FEATURES</a><a href="#status">STATUS</a><a href="https://github.com/" target="_blank" rel="noopener">GITHUB ↗</a></nav><div class="tag">GAMING LIKE A BEAST.</div></div></header>
+<header><div class="wrap nav"><a class="brand" href="#home">ST.<b>08</b><small>EMULATOR</small></a><nav><a href="#home">HOME</a><a href="#project">PROJECT</a><a href="#features">FEATURES</a><a href="#file-loader">FILE LOADER</a><a href="#status">STATUS</a><a href="https://github.com/" target="_blank" rel="noopener">GITHUB ↗</a></nav><div class="tag">GAMING LIKE A BEAST.</div></div></header>
 <section class="hero" id="home"><div class="wrap hero-inner"><div><div class="eyebrow">Independent emulation research</div><h1>ST<span>.</span>08</h1><div class="subhead">EMULATOR</div><p class="intro">Exploring console architecture, executable formats and experimental software compatibility. Built for the next generation of curious developers.</p><div class="actions"><a class="btn primary" href="#project">▶ &nbsp; EXPLORE PROJECT</a><a class="btn" href="https://github.com/" target="_blank" rel="noopener">↗ &nbsp; VIEW ON GITHUB</a></div></div><div class="art" aria-hidden="true"><div class="orb"><div class="chip"><span>08</span></div></div><div class="side">CONSOLE<br>RESEARCH<br>EMULATION</div></div></div></section>
 <div class="wrap"><section class="features" id="features">
-<article class="feature"><div class="glyph">&lt;/&gt;</div><h2>ELF ANALYSIS</h2><p>Inspect ELF64 executables and explore their headers, segments and structure.</p><a class="mini" href="#project">LEARN MORE →</a></article>
+<article class="feature"><div class="glyph">&lt;/&gt;</div><h2>ELF ANALYSIS</h2><p>Inspect ELF64 executables and explore their headers, segments and structure.</p><a class="mini" href="#file-loader">OPEN FILE LOADER →</a></article>
 <article class="feature"><div class="glyph">▦</div><h2>CPU RESEARCH</h2><p>Study instruction decoding, memory models and experimental execution.</p><a class="mini" href="#status">VIEW STATUS →</a></article>
 <article class="feature"><div class="glyph">▣</div><h2>GRAPHICS</h2><p>Explore rendering pipelines, GPU architecture and graphics APIs.</p><a class="mini" href="#status">VIEW STATUS →</a></article>
 <article class="feature"><div class="glyph">⚙</div><h2>SYSTEM MODULES</h2><p>Research system libraries, kernel concepts and runtime behavior.</p><a class="mini" href="#status">VIEW STATUS →</a></article></section>
-<section class="lower"><div class="panel"><div class="panel-title">&gt;_ SYSTEM LOG</div><div class="terminal"><div><span class="ok">[INFO]</span> ST.08 Emulator v0.1.0</div><div><span class="ok">[INFO]</span> Initializing research environment...</div><div><span class="ok">[INFO]</span> ELF inspection: available</div><div><span class="ok">[INFO]</span> CPU execution: not implemented</div><div><span class="ok">[INFO]</span> System modules: not implemented</div><div><span class="ok">[INFO]</span> Graphics output: not implemented</div><div><span class="ok">[INFO]</span> Ready for research.</div><div class="ok">&gt;_ <span id="cursor">▌</span></div></div></div>
+
+<section class="loader" id="file-loader" aria-labelledby="loader-title">
+  <div class="panel-title" id="loader-title">&gt;_ FILE LOADER // ELF64 HEADER INSPECTOR</div>
+  <div class="loader-inner">
+    <p class="loader-desc">Escolha um arquivo local para validar o cabeçalho ELF. O arquivo é lido somente no navegador, não é enviado para um servidor e nunca é executado.</p>
+    <div class="file-drop">
+      <div class="glyph" aria-hidden="true">▣</div>
+      <strong id="file-prompt">NENHUM ARQUIVO SELECIONADO</strong>
+      <label class="file-label" for="elf-file">SELECT LOCAL FILE</label>
+      <input class="file-input" type="file" id="elf-file" aria-describedby="file-help">
+      <span class="small-note" id="file-help">Formatos aceitos para inspeção: arquivos com cabeçalho ELF de 64 bits. Extensão do arquivo não garante compatibilidade.</span>
+    </div>
+    <div class="file-meta" aria-live="polite">
+      <div class="meta-cell"><div class="meta-label">FILE NAME</div><div class="meta-value" id="file-name">—</div></div>
+      <div class="meta-cell"><div class="meta-label">FILE SIZE</div><div class="meta-value" id="file-size">—</div></div>
+      <div class="meta-cell"><div class="meta-label">ARCHITECTURE</div><div class="meta-value" id="file-arch">—</div></div>
+    </div>
+    <div class="status-line" id="file-status" role="status">[WAITING] Aguardando seleção de arquivo.</div>
+    <p class="small-note">Este painel valida apenas informações básicas do cabeçalho. Não verifica se o arquivo é seguro, não carrega bibliotecas e não executa jogos ou código.</p>
+  </div>
+</section>
+
+<section class="lower"><div class="panel"><div class="panel-title">&gt;_ SYSTEM LOG</div><div class="terminal"><div><span class="ok">[INFO]</span> ST.08 Emulator v0.1.0</div><div><span class="ok">[INFO]</span> Initializing research environment...</div><div><span class="ok">[INFO]</span> ELF inspection: header validation available</div><div><span class="ok">[INFO]</span> CPU execution: not implemented</div><div><span class="ok">[INFO]</span> System modules: not implemented</div><div><span class="ok">[INFO]</span> Graphics output: not implemented</div><div><span class="ok">[INFO]</span> Ready for research.</div><div class="ok">&gt;_ <span id="cursor">▌</span></div></div></div>
 <div class="about" id="project"><h2>ABOUT THE PROJECT</h2><p>ST.08 Emulator is an independent experimental project focused on learning about executable formats, console architecture and software compatibility.</p><p class="disclaimer">This is a research project, not a finished emulator.</p><p>The current prototype inspects ELF64 headers and writes diagnostic logs. CPU execution, PS5 system modules and game graphics are not implemented yet.</p><a class="btn" href="https://github.com/" target="_blank" rel="noopener">READ THE SOURCE →</a></div>
 <div class="panel" id="status"><div class="panel-title">COMPATIBILITY STATUS</div><div class="meter-row"><span>ELF INSPECTION</span><div class="meter"><i class="full"></i></div><span class="percent">100%</span></div><div class="meter-row"><span>CPU EMULATION</span><div class="meter"><i></i></div><span class="percent">0%</span></div><div class="meter-row"><span>SYSTEM MODULES</span><div class="meter"><i></i></div><span class="percent">0%</span></div><div class="meter-row"><span>GRAPHICS OUTPUT</span><div class="meter"><i></i></div><span class="percent">0%</span></div><div class="notice">ⓘ Independent educational project. Not affiliated with Sony. All trademarks belong to their respective owners.</div></div></section></div>
 <footer><div class="wrap foot"><div><strong>ST.08 EMULATOR</strong><br>GAMING LIKE A BEAST.</div><div>© 2026 ST.08 Emulator · Independent research project.</div><div><a href="https://github.com/" target="_blank" rel="noopener">GITHUB ↗</a></div></div></footer>
-<script>const c=document.getElementById("cursor");setInterval(()=>{if(c)c.style.visibility=c.style.visibility==="hidden"?"visible":"hidden"},500);</script>
+<script>
+const cursor = document.getElementById("cursor");
+setInterval(() => { if (cursor) cursor.style.visibility = cursor.style.visibility === "hidden" ? "visible" : "hidden"; }, 500);
+
+const fileInput = document.getElementById("elf-file");
+const filePrompt = document.getElementById("file-prompt");
+const fileName = document.getElementById("file-name");
+const fileSize = document.getElementById("file-size");
+const fileArch = document.getElementById("file-arch");
+const fileStatus = document.getElementById("file-status");
+
+function formatBytes(bytes) {
+  if (bytes < 1024) return `${bytes} B`;
+  const units = ["KB", "MB", "GB", "TB"];
+  let size = bytes / 1024;
+  let unit = 0;
+  while (size >= 1024 && unit < units.length - 1) {
+    size /= 1024;
+    unit++;
+  }
+  return `${size.toFixed(size >= 10 ? 1 : 2)} ${units[unit]}`;
+}
+
+function resetFileDetails() {
+  fileName.textContent = "—";
+  fileSize.textContent = "—";
+  fileArch.textContent = "—";
+  filePrompt.textContent = "NENHUM ARQUIVO SELECIONADO";
+}
+
+fileInput.addEventListener("change", async () => {
+  const file = fileInput.files && fileInput.files[0];
+  fileStatus.className = "status-line";
+  if (!file) {
+    resetFileDetails();
+    fileStatus.textContent = "[WAITING] Nenhum arquivo selecionado.";
+    return;
+  }
+
+  fileName.textContent = file.name;
+  fileSize.textContent = formatBytes(file.size);
+  fileArch.textContent = "Verificando…";
+  filePrompt.textContent = "ARQUIVO SELECIONADO";
+
+  if (file.size < 20) {
+    fileArch.textContent = "Desconhecida";
+    fileStatus.className = "status-line bad";
+    fileStatus.textContent = "[ERROR] Arquivo pequeno demais para conter um cabeçalho ELF64 válido.";
+    return;
+  }
+
+  try {
+    const header = new Uint8Array(await file.slice(0, 20).arrayBuffer());
+    const isElf = header[0] === 0x7f && header[1] === 0x45 &&
+                  header[2] === 0x4c && header[3] === 0x46;
+    const elfClass = header[4];
+    const dataEncoding = header[5];
+    const machine = header[18] | (header[19] << 8);
+
+    if (!isElf) {
+      fileArch.textContent = "Não é ELF";
+      fileStatus.className = "status-line bad";
+      fileStatus.textContent = "[ERROR] Assinatura ELF inválida. Nenhum arquivo foi executado.";
+      return;
+    }
+    if (elfClass !== 2) {
+      fileArch.textContent = elfClass === 1 ? "ELF32 (32 bits)" : "Classe desconhecida";
+      fileStatus.className = "status-line bad";
+      fileStatus.textContent = "[INVALID] O cabeçalho não declara ELF64 (classe de 64 bits).";
+      return;
+    }
+    if (dataEncoding !== 1 && dataEncoding !== 2) {
+      fileArch.textContent = "Codificação desconhecida";
+      fileStatus.className = "status-line bad";
+      fileStatus.textContent = "[INVALID] Arquivo ELF64 com codificação de bytes inválida ou desconhecida.";
+      return;
+    }
+
+    const machineNames = {
+      3: "x86 (32 bits)",
+      8: "MIPS",
+      20: "PowerPC",
+      21: "PowerPC64",
+      22: "S390",
+      40: "ARM",
+      42: "SuperH",
+      43: "SPARC V9",
+      62: "x86-64",
+      183: "AArch64 (ARM64)",
+      243: "RISC-V"
+    };
+    const endian = dataEncoding === 1 ? "little-endian" : "big-endian";
+    const machineName = machineNames[machine] || `ELF machine ID ${machine}`;
+    fileArch.textContent = `${machineName} · 64 bits`;
+    fileStatus.className = "status-line good";
+    fileStatus.textContent = `[VALID HEADER] Assinatura ELF válida; classe de 64 bits; ${endian}. Isso não garante que o arquivo seja compatível ou seguro.`;
+  } catch (error) {
+    fileArch.textContent = "Erro de leitura";
+    fileStatus.className = "status-line bad";
+    fileStatus.textContent = "[ERROR] O navegador não conseguiu ler o cabeçalho deste arquivo.";
+  }
+});
+</script>
 </body></html>
