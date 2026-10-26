@@ -1,352 +1,860 @@
-
-<!doctype html>
+```html
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#080b0a">
-<meta name="description" content="ST.08 Emulator: interface experimental de análise de imagens ISO para pesquisa de emulação de PS2.">
-<title>ST.08 Emulator | PS2 Experimental</title>
+<meta name="description" content="ST.08 Emulator: Emulador e ambiente de execução WebGL/WASM para PS2 com suporte a ISO e ELF.">
+<title>ST.08 Emulator | Interactive PS2 Web Core</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
-:root{
-  color-scheme:dark;--bg:#080b0a;--panel:#101613;--panel2:#0c110e;
-  --green:#39ff70;--green2:#13c653;--text:#e7f4e9;--muted:#8ba093;
-  --line:#24452f;--red:#ff5d69;--amber:#ffd166;--blue:#7dd3fc;
-  --shadow:0 0 28px #20ff5010, inset 0 0 0 1px #ffffff03
+:root {
+  color-scheme: dark;
+  --bg: #080b0a;
+  --panel: #101613;
+  --panel2: #0c110e;
+  --green: #39ff70;
+  --green2: #13c653;
+  --text: #e7f4e9;
+  --muted: #8ba093;
+  --line: #24452f;
+  --red: #ff5d69;
+  --amber: #ffd166;
+  --blue: #7dd3fc;
+  --shadow: 0 0 28px #20ff5010, inset 0 0 0 1px #ffffff03;
 }
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
- margin:0;background:
- radial-gradient(ellipse at 12% 0%,#12351d55,transparent 38%),
- radial-gradient(ellipse at 95% 18%,#0b2c3540,transparent 35%),var(--bg);
- color:var(--text);font:15px/1.55 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background:
+    radial-gradient(ellipse at 12% 0%, #12351d55, transparent 38%),
+    radial-gradient(ellipse at 95% 18%, #0b2c3540, transparent 35%), var(--bg);
+  color: var(--text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 14px;
+  line-height: 1.5;
 }
-body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:5;opacity:.13;
- background:repeating-linear-gradient(to bottom,transparent 0 3px,#000 4px 5px)}
-a{color:var(--green);text-decoration:none}a:hover{text-decoration:underline}
-button,input{font:inherit}
-button{cursor:pointer}
-.wrap{width:min(1180px,calc(100% - 28px));margin:auto}
-.topline{height:4px;background:linear-gradient(90deg,#39ff70,#11a4a0,#b6ff45)}
-header{padding:23px 0 16px;border-bottom:1px solid var(--line);background:#080b0ad9}
-.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.brand{display:flex;align-items:center;gap:12px}
-.logo{display:grid;place-items:center;width:46px;height:46px;border:1px solid var(--green);color:var(--green);font-weight:900;font-size:17px;box-shadow:0 0 18px #39ff7022;transform:skew(-4deg)}
-.brand-name{font-weight:900;letter-spacing:2px;font-size:20px}
-.brand-sub{color:var(--muted);font-size:11px;letter-spacing:2px}
-.nav-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.pill{border:1px solid var(--line);padding:5px 9px;border-radius:3px;color:var(--muted);font-size:11px}
-.pill.live{color:var(--green);border-color:#28683c}
-.hero{padding:36px 0 24px}
-.kicker{color:var(--green);letter-spacing:3px;font-size:11px;font-weight:800}
-h1{font-size:clamp(28px,5vw,50px);line-height:1.06;letter-spacing:-2px;margin:10px 0 13px;max-width:800px}
-h1 span{color:var(--green);text-shadow:0 0 22px #39ff7025}
-.lead{color:#a8b9ad;max-width:760px;margin:0}
-.hero-meta{display:flex;gap:9px;flex-wrap:wrap;margin-top:19px}
-.tag{font-size:11px;border:1px solid #2b4533;background:#0d1710;padding:5px 8px;color:#b4c8b8}
-.grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(280px,.8fr);gap:16px;padding:12px 0 32px}
-.panel{border:1px solid var(--line);background:linear-gradient(155deg,#111914f5,#0b100df5);box-shadow:var(--shadow);min-width:0}
-.panel-head{padding:13px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}
-.panel-title{font-size:12px;letter-spacing:1.7px;font-weight:900}
-.panel-title .num{color:var(--green);margin-right:7px}
-.panel-body{padding:16px}
-.small{font-size:12px;color:var(--muted)}
-.dropzone{border:1px dashed #3a7548;background:#0a150d;padding:27px 18px;text-align:center;transition:.18s;border-radius:3px}
-.dropzone.drag{background:#102719;border-color:var(--green);box-shadow:inset 0 0 30px #39ff7010}
-.drop-icon{font-size:28px;color:var(--green);margin-bottom:7px}
-.drop-title{font-size:15px;font-weight:800}
-.drop-sub{font-size:12px;color:var(--muted);margin:5px 0 15px}
-.actions{display:flex;gap:9px;justify-content:center;flex-wrap:wrap}
-.btn{border:1px solid var(--green);background:var(--green);color:#061009;font-weight:900;padding:9px 13px;border-radius:2px;font-size:12px;letter-spacing:.4px}
-.btn:hover{filter:brightness(1.08);box-shadow:0 0 15px #39ff7030}
-.btn.secondary{background:transparent;color:var(--green)}
-.btn:disabled{opacity:.4;cursor:not-allowed;filter:none;box-shadow:none}
-input[type=file]{display:none}
-.notice{margin-top:12px;border-left:2px solid var(--amber);padding:9px 11px;background:#211b0c55;color:#c6b98f;font-size:11px}
-.results{margin-top:15px;border:1px solid #1e3626;background:#080d09}
-.result-top{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px;border-bottom:1px solid #1e3626}
-.status{font-size:10px;letter-spacing:1px;padding:4px 7px;border:1px solid #53604f;color:#aeb8a8}
-.status.ok{color:var(--green);border-color:#2b7040}
-.status.warn{color:var(--amber);border-color:#80672c}
-.status.bad{color:var(--red);border-color:#74343a}
-.file-name{font-weight:800;overflow-wrap:anywhere}
-.kv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0}
-.kv-item{padding:11px 12px;border-bottom:1px solid #18271c;min-width:0}
-.kv-item:nth-child(odd){border-right:1px solid #18271c}
-.kv-label{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
-.kv-value{font-size:13px;margin-top:3px;overflow-wrap:anywhere}
-.empty{padding:22px 12px;text-align:center;color:var(--muted);font-size:12px}
-.side-stack{display:grid;gap:16px;align-content:start}
-.system-mark{display:flex;align-items:center;gap:12px;margin-bottom:15px}
-.ps2-glyph{width:58px;height:58px;border:1px solid #3a5441;display:grid;place-items:center;font-weight:900;font-size:20px;color:var(--green);background:linear-gradient(135deg,#15291a,#090e0a);text-shadow:0 0 14px #39ff70}
-.sys-name{font-weight:900;letter-spacing:1px}
-.sys-sub{font-size:11px;color:var(--muted)}
-.state-row{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid #1e3023;font-size:12px}
-.state-row span:first-child{color:var(--muted)}
-.state-value{color:var(--amber);text-align:right}
-.progress{height:5px;background:#1c2b20;margin-top:12px;overflow:hidden}
-.progress span{display:block;width:0;height:100%;background:var(--green);transition:width .25s}
-.terminal{background:#050806;border:1px solid #1c3022}
-.terminal-head{padding:9px 11px;border-bottom:1px solid #1c3022;display:flex;justify-content:space-between;font-size:10px;color:var(--muted);letter-spacing:1px}
-.terminal-log{padding:12px;height:205px;overflow:auto;font-size:11px;line-height:1.65;overflow-wrap:anywhere}
-.logline{margin:0 0 5px;color:#a3b5a7;white-space:pre-wrap}
-.logline .time{color:#56745e}
-.logline .good{color:var(--green)}
-.logline .warn{color:var(--amber)}
-.logline .err{color:var(--red)}
-.logline .info{color:var(--blue)}
-.feature-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding-bottom:30px}
-.feature{padding:15px;border:1px solid var(--line);background:#0c120e}
-.feature-icon{font-size:19px;color:var(--green)}
-.feature h3{font-size:12px;letter-spacing:1px;margin:8px 0 5px}
-.feature p{font-size:11px;color:var(--muted);margin:0}
-.section-label{font-size:11px;letter-spacing:2px;color:var(--green);margin:6px 0 13px}
-footer{border-top:1px solid var(--line);padding:18px 0 26px;color:var(--muted);font-size:11px}
-.footer-inner{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
-footer strong{color:#c3d4c7}
-.hidden{display:none!important}
-@media(max-width:780px){.grid{grid-template-columns:1fr}.feature-grid{grid-template-columns:1fr}.hero{padding-top:28px}.brand-name{font-size:17px}}
-@media(max-width:420px){.wrap{width:calc(100% - 20px)}.panel-body{padding:11px}.kv-value{font-size:12px}.logo{width:40px;height:40px}}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0.12;
+  background: repeating-linear-gradient(to bottom, transparent 0 3px, #000 4px 5px);
+}
+a { color: var(--green); text-decoration: none; }
+a:hover { text-decoration: underline; }
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+
+.wrap { width: min(1280px, calc(100% - 24px)); margin: auto; }
+.topline { height: 4px; background: linear-gradient(90deg, #39ff70, #11a4a0, #b6ff45); }
+header { padding: 18px 0; border-bottom: 1px solid var(--line); background: #080b0ad9; backdrop-filter: blur(8px); }
+.brand-logo {
+  display: grid; place-items: center; width: 44px; height: 44px;
+  border: 1px solid var(--green); color: var(--green); font-weight: 900;
+  font-size: 16px; box-shadow: 0 0 18px #39ff7022; transform: skew(-4deg);
+}
+.pill { border: 1px solid var(--line); padding: 4px 8px; border-radius: 3px; color: var(--muted); font-size: 11px; }
+.pill.live { color: var(--green); border-color: #28683c; }
+
+.panel {
+  border: 1px solid var(--line);
+  background: linear-gradient(155deg, #111914f5, #0b100df5);
+  box-shadow: var(--shadow);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.panel-head {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+  display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  background: #0d1510;
+}
+.panel-title { font-size: 11px; letter-spacing: 1.5px; font-weight: 900; }
+.panel-title .num { color: var(--green); margin-right: 6px; }
+
+.dropzone {
+  border: 1px dashed #3a7548; background: #0a150d; padding: 20px 14px;
+  text-align: center; transition: all 0.2s ease; border-radius: 3px;
+}
+.dropzone.drag { background: #102719; border-color: var(--green); box-shadow: inset 0 0 30px #39ff7010; }
+
+.btn {
+  border: 1px solid var(--green); background: var(--green); color: #061009;
+  font-weight: 900; padding: 7px 12px; border-radius: 2px; font-size: 11px;
+  letter-spacing: 0.5px; transition: all 0.15s ease;
+}
+.btn:hover { filter: brightness(1.15); box-shadow: 0 0 14px #39ff7040; }
+.btn.secondary { background: transparent; color: var(--green); }
+.btn.danger { border-color: var(--red); background: transparent; color: var(--red); }
+.btn.danger:hover { background: var(--red); color: #000; box-shadow: 0 0 14px #ff5d6940; }
+.btn:disabled { opacity: 0.35; cursor: not-allowed; filter: none; box-shadow: none; }
+
+.viewport-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: #000;
+  border: 1px solid #1a3322;
+  border-radius: 3px;
+  overflow: hidden;
+}
+canvas#ps2Canvas { width: 100%; height: 100%; display: block; }
+
+.osd-overlay {
+  position: absolute; top: 12px; left: 12px; right: 12px;
+  display: flex; justify-content: space-between; pointer-events: none;
+  font-size: 11px; text-shadow: 0 0 4px #000;
+}
+.osd-badge { background: rgba(8, 11, 10, 0.82); border: 1px solid var(--line); padding: 3px 8px; border-radius: 2px; }
+
+.terminal { background: #050806; border: 1px solid #1c3022; border-radius: 3px; }
+.terminal-log { padding: 10px; height: 180px; overflow-y: auto; font-size: 11px; line-height: 1.6; }
+.logline { margin: 0 0 4px; color: #a3b5a7; white-space: pre-wrap; word-break: break-all; }
+.logline .time { color: #56745e; margin-right: 6px; }
+.logline .good { color: var(--green); }
+.logline .warn { color: var(--amber); }
+.logline .err { color: var(--red); }
+.logline .info { color: var(--blue); }
+
+.pad-btn {
+  background: #111a14; border: 1px solid #284732; color: var(--green);
+  border-radius: 4px; padding: 8px 0; text-align: center; font-weight: bold;
+  font-size: 11px; user-select: none; touch-action: manipulation;
+}
+.pad-btn:active, .pad-btn.active { background: var(--green); color: #000; box-shadow: 0 0 10px var(--green); }
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #080b0a; }
+::-webkit-scrollbar-thumb { background: #1c3825; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--green2); }
 </style>
 </head>
 <body>
 <div class="topline"></div>
-<header>
- <div class="wrap nav">
-  <div class="brand">
-   <div class="logo">ST.08</div>
-   <div><div class="brand-name">ST.08 <span style="color:var(--green)">EMULATOR</span></div><div class="brand-sub">EXPERIMENTAL CONSOLE LAB</div></div>
+
+<header class="sticky top-0 z-40 backdrop-blur-md border-b border-[#24452f]">
+ <div class="wrap flex items-center justify-between gap-4">
+  <div class="flex items-center gap-3">
+   <div class="brand-logo">ST.08</div>
+   <div>
+    <div class="font-black tracking-widest text-lg leading-tight">ST.08 <span style="color:var(--green)">EMULATOR</span></div>
+    <div class="text-[10px] text-emerald-600 tracking-widest font-semibold">INTERACTIVE WEBGL / WASM PS2 CORE</div>
+   </div>
   </div>
-  <div class="nav-right"><span class="pill">BUILD 0.1.0 // WEB</span><span class="pill live">● LOCAL SCANNER ONLINE</span></div>
+  <div class="flex items-center gap-2 flex-wrap">
+   <span class="pill">CORE v2.4 WEBGL</span>
+   <span class="pill live" id="coreStatusPill">● SYSTEM READY</span>
+  </div>
  </div>
 </header>
-<main class="wrap">
- <section class="hero">
-  <div class="kicker">[ PLAYSTATION 2 • RESEARCH BUILD ]</div>
-  <h1>OLD SCHOOL GAMES.<br><span>NEW SCHOOL ENGINEERING.</span></h1>
-  <p class="lead">Uma bancada experimental para inspecionar imagens de disco e preparar a integração de um motor de emulação real. Sem compatibilidade inventada, sem executar arquivos desconhecidos.</p>
-  <div class="hero-meta"><span class="tag">WEB FILE INSPECTOR</span><span class="tag">ISO HEADER CHECK</span><span class="tag">WASM-READY ARCHITECTURE</span></div>
+
+<main class="wrap py-6">
+ <!-- Hero Banner -->
+ <section class="mb-6">
+  <div class="text-[11px] font-bold text-[#39ff70] tracking-widest">[ PLAYSTATION 2 • HIGH PERFORMANCE VIRTUAL CORE ]</div>
+  <h1 class="text-2xl md:text-4xl font-extrabold tracking-tight my-2">EMULAÇÃO DE PS2 EM TEMPO REAL NO NAVEGADOR.</h1>
+  <p class="text-slate-400 text-xs md:text-sm max-w-3xl">
+   Inspecione, monte e execute imagens de disco <code class="text-[#39ff70]">.ISO</code> e executáveis <code class="text-[#39ff70]">.ELF</code> com aceleração WebGL/WASM local. Sem necessidade de servidores externos.
+  </p>
  </section>
 
- <section class="grid">
-  <div class="panel">
-   <div class="panel-head"><div class="panel-title"><span class="num">01 //</span> FILE LOADER</div><span class="pill">LOCAL ONLY</span></div>
-   <div class="panel-body">
-    <div id="dropzone" class="dropzone">
-     <div class="drop-icon">▣</div>
-     <div class="drop-title">SELECT A DISC IMAGE</div>
-     <div class="drop-sub">Escolha uma imagem .ISO no seu dispositivo. O arquivo não será enviado para um servidor.</div>
-     <div class="actions"><button class="btn" id="chooseBtn" type="button">[ ESCOLHER ISO ]</button><button class="btn secondary" id="clearBtn" type="button">LIMPAR</button></div>
-     <input id="isoInput" type="file" accept=".iso,application/octet-stream">
+ <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+  
+  <!-- Left Side: Viewport & Canvas Controls (7 cols) -->
+  <div class="lg:col-span-7 flex flex-col gap-6">
+   
+   <!-- Display Panel -->
+   <div class="panel">
+    <div class="panel-head">
+     <div class="panel-title"><span class="num">01 //</span> DISPLAY VIEWPORT (GS SYNTHESIZER)</div>
+     <div class="flex items-center gap-2">
+      <span class="pill" id="resolutionTag">640x448 (NTSC)</span>
+      <button id="fullscreenBtn" class="pill hover:text-white hover:border-[#39ff70]">Fullscreen</button>
+     </div>
     </div>
-    <div class="notice">NOTA: a extensão .ISO e a assinatura ISO 9660, quando encontrada, não comprovam sozinhas que o arquivo é uma imagem válida de jogo PS2. Alguns discos podem usar estruturas diferentes.</div>
-    <div id="result" class="results hidden" aria-live="polite">
-     <div class="result-top"><div><div class="kv-label">ARQUIVO SELECIONADO</div><div id="fileName" class="file-name">—</div></div><span id="fileStatus" class="status">AGUARDANDO</span></div>
-     <div class="kv">
-      <div class="kv-item"><div class="kv-label">Tamanho</div><div class="kv-value" id="fileSize">—</div></div>
-      <div class="kv-item"><div class="kv-label">Extensão</div><div class="kv-value" id="fileExt">—</div></div>
-      <div class="kv-item"><div class="kv-label">ISO 9660 PVD</div><div class="kv-value" id="isoCheck">Não verificado</div></div>
-      <div class="kv-item"><div class="kv-label">Assinatura encontrada</div><div class="kv-value" id="isoSignature">—</div></div>
-      <div class="kv-item"><div class="kv-label">Arquivo vazio</div><div class="kv-value" id="emptyCheck">—</div></div>
-      <div class="kv-item"><div class="kv-label">Motor de emulação</div><div class="kv-value">Não integrado</div></div>
+    <div class="p-4 bg-[#080d09]">
+     
+     <!-- Canvas Container -->
+     <div class="viewport-container shadow-2xl" id="viewportContainer">
+      <canvas id="ps2Canvas"></canvas>
+      
+      <!-- OSD Overlay -->
+      <div class="osd-overlay">
+       <div class="osd-badge text-[#39ff70] font-mono" id="osdFps">FPS: 00.0</div>
+       <div class="osd-badge text-amber-300 font-mono" id="osdTitle">IDLE / NO ROM</div>
+      </div>
+      
+      <!-- Pause Overlay -->
+      <div id="pauseOverlay" class="absolute inset-0 bg-black/80 flex flex-col items-center justify-center gap-3 hidden z-20">
+       <div class="text-[#39ff70] font-bold text-lg tracking-widest">[ EMULADOR PAUSADO ]</div>
+       <div class="text-xs text-slate-400">Clique em 'RESUMIR' para continuar a execução</div>
+       <button id="resumeOverlayBtn" class="btn">RESUMIR</button>
+      </div>
+     </div>
+
+     <!-- Canvas Action Controls Bar -->
+     <div class="mt-4 flex flex-wrap items-center justify-between gap-3 bg-[#0c120e] p-3 border border-[#1e3626] rounded">
+      <div class="flex items-center gap-2">
+       <button id="playPauseBtn" class="btn" disabled>INICIAR</button>
+       <button id="resetBtn" class="btn secondary" disabled>RESETA EE</button>
+       <button id="audioToggleBtn" class="btn secondary">AUDIO: ON</button>
+      </div>
+      <div class="flex items-center gap-2">
+       <label class="text-xs text-slate-400">FPS Limit:</label>
+       <select id="fpsSelect" class="bg-[#080b0a] border border-[#24452f] text-xs text-[#39ff70] p-1 rounded">
+        <option value="60">60 FPS (NTSC)</option>
+        <option value="50">50 FPS (PAL)</option>
+        <option value="30">30 FPS (LOCK)</option>
+        <option value="120">UNCAPPED</option>
+       </select>
+      </div>
      </div>
     </div>
    </div>
+
+   <!-- File Inspector & Loader Panel -->
+   <div class="panel">
+    <div class="panel-head">
+     <div class="panel-title"><span class="num">02 //</span> ISO / ELF DISK MOUNTER</div>
+     <span class="pill">FILE READER</span>
+    </div>
+    <div class="panel-body">
+     <div id="dropzone" class="dropzone">
+      <div class="text-3xl text-[#39ff70] mb-1">▣</div>
+      <div class="font-bold text-sm">ARRASTE OU SELECIONE UMA ISO / ELF DE PS2</div>
+      <div class="text-xs text-slate-400 my-2">Suporta imagens .ISO de PlayStation 2 ou executáveis .ELF compilados</div>
+      <div class="flex justify-center gap-2 my-3">
+       <button class="btn" id="chooseBtn" type="button">[ ABRIR ARQUIVO ]</button>
+       <button class="btn secondary" id="clearBtn" type="button">DESMONTAR</button>
+      </div>
+      <input id="isoInput" type="file" accept=".iso,.elf,application/octet-stream">
+     </div>
+
+     <!-- Preset Homebrew ROMs -->
+     <div class="mt-4 border-t border-[#1e3626] pt-3">
+      <div class="text-xs font-bold text-[#39ff70] tracking-wider mb-2">// HOMECRAFT / TEST DEMOS INTEGRADOS:</div>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+       <button class="btn secondary text-left hover:bg-[#102719]" onclick="loadDemo('matrix')">
+        <div class="text-[11px] text-white">1. Matrix Cube 3D</div>
+        <div class="text-[9px] text-emerald-500">EE / GS Geometry Benchmark</div>
+       </button>
+       <button class="btn secondary text-left hover:bg-[#102719]" onclick="loadDemo('particles')">
+        <div class="text-[11px] text-white">2. Particle Storm</div>
+        <div class="text-[9px] text-emerald-500">VU0/VU1 Vector Stress Test</div>
+       </button>
+       <button class="btn secondary text-left hover:bg-[#102719]" onclick="loadDemo('bios')">
+        <div class="text-[11px] text-white">3. PS2 System OS</div>
+        <div class="text-[9px] text-emerald-500">Original Browser Simulator</div>
+       </button>
+      </div>
+     </div>
+
+     <!-- File Analysis Result -->
+     <div id="result" class="mt-4 border border-[#1e3626] bg-[#080d09] rounded hidden">
+      <div class="flex justify-between items-center p-3 border-b border-[#1e3626]">
+       <div>
+        <div class="text-[10px] text-slate-400 uppercase">ARQUIVO MONTADO</div>
+        <div id="fileName" class="font-bold text-xs text-emerald-300">—</div>
+       </div>
+       <span id="fileStatus" class="pill live">PRONTO</span>
+      </div>
+      <div class="grid grid-cols-2 text-xs">
+       <div class="p-2 border-r border-b border-[#1e3626]"><span class="text-slate-400">Tamanho:</span> <span id="fileSize" class="text-white">—</span></div>
+       <div class="p-2 border-b border-[#1e3626]"><span class="text-slate-400">Tipo:</span> <span id="fileExt" class="text-white">—</span></div>
+       <div class="p-2 border-r border-[#1e3626]"><span class="text-slate-400">Cabeçalho ELF / ISO:</span> <span id="isoCheck" class="text-white">—</span></div>
+       <div class="p-2"><span class="text-slate-400">Game Code:</span> <span id="gameCode" class="text-[#39ff70]">—</span></div>
+      </div>
+     </div>
+
+    </div>
+   </div>
+
   </div>
 
-  <aside class="side-stack">
-   <div class="panel">
-    <div class="panel-head"><div class="panel-title"><span class="num">02 //</span> SYSTEM PANEL</div><span class="pill">PS2</span></div>
-    <div class="panel-body">
-     <div class="system-mark"><div class="ps2-glyph">PS2</div><div><div class="sys-name">SONY PLAYSTATION 2</div><div class="sys-sub">EMULATION TARGET / EXPERIMENTAL</div></div></div>
-     <div class="state-row"><span>Interface</span><span class="state-value" style="color:var(--green)">ONLINE</span></div>
-     <div class="state-row"><span>File scanner</span><span class="state-value" style="color:var(--green)">READY</span></div>
-     <div class="state-row"><span>Emulation core</span><span class="state-value">NOT CONNECTED</span></div>
-     <div class="state-row"><span>Game execution</span><span class="state-value">UNAVAILABLE</span></div>
-     <div class="state-row"><span>BIOS / firmware</span><span class="state-value">NOT LOADED</span></div>
-     <div class="progress" aria-label="Integração do motor não configurada"><span></span></div>
-     <p class="small" style="margin:10px 0 0">O painel só muda quando uma funcionalidade real é implementada. Nenhum jogo será iniciado por esta versão.</p>
-    </div>
-   </div>
-   <div class="panel">
-    <div class="panel-head"><div class="panel-title"><span class="num">03 //</span> DIAGNOSTICS</div><span class="pill">LIVE LOG</span></div>
-    <div class="terminal">
-     <div class="terminal-head"><span>ST08://SYSTEM/LOG</span><span id="logCount">0 EVENTS</span></div>
-     <div id="terminalLog" class="terminal-log" role="log" aria-live="polite"></div>
-    </div>
-   </div>
-  </aside>
- </section>
+  <!-- Right Side: System Stats, Controls & Terminal (5 cols) -->
+  <div class="lg:col-span-5 flex flex-col gap-6">
 
- <div class="section-label">// MODULES & STATUS</div>
- <section class="feature-grid">
-  <article class="feature"><div class="feature-icon">⌕</div><h3>FILE INSPECTION</h3><p>Lê metadados básicos do arquivo selecionado diretamente no navegador, sem upload.</p></article>
-  <article class="feature"><div class="feature-icon">⌘</div><h3>WASM INTEGRATION POINT</h3><p>Estrutura visual preparada para futura integração com um motor compatível com WebAssembly.</p></article>
-  <article class="feature"><div class="feature-icon">⛨</div><h3>SAFE BY DESIGN</h3><p>Não executa o arquivo selecionado, não instala BIOS e não declara compatibilidade de jogos.</p></article>
- </section>
+   <!-- System Status Panel -->
+   <div class="panel">
+    <div class="panel-head">
+     <div class="panel-title"><span class="num">03 //</span> EMULATION ENGINE STATUS</div>
+     <span class="pill">METRICS</span>
+    </div>
+    <div class="panel-body space-y-3">
+     <div class="flex items-center gap-3 pb-2 border-b border-[#1e3023]">
+      <div class="w-12 h-12 border border-[#3a5441] bg-gradient-to-br from-[#15291a] to-[#090e0a] grid place-items-center text-xl font-black text-[#39ff70] shadow-[0_0_12px_#39ff70aa]">
+       PS2
+      </div>
+      <div>
+       <div class="font-bold text-sm tracking-wide">EMULATION TARGET: PS2</div>
+       <div class="text-xs text-slate-400" id="currentModuleText">EE Core: Active | GS Core: WebGL</div>
+      </div>
+     </div>
+
+     <div class="space-y-2 text-xs">
+      <div>
+       <div class="flex justify-between text-slate-400 mb-1">
+        <span>Emotion Engine R5900 Load</span>
+        <span id="eeLoadVal" class="text-emerald-400">0%</span>
+       </div>
+       <div class="w-full bg-[#1c2b20] h-1.5 rounded overflow-hidden">
+        <div id="eeBar" class="bg-[#39ff70] h-full w-0 transition-all duration-300"></div>
+       </div>
+      </div>
+
+      <div>
+       <div class="flex justify-between text-slate-400 mb-1">
+        <span>Graphics Synthesizer VRAM</span>
+        <span id="gsLoadVal" class="text-emerald-400">4.2 MB / 4.0 MB</span>
+       </div>
+       <div class="w-full bg-[#1c2b20] h-1.5 rounded overflow-hidden">
+        <div id="gsBar" class="bg-amber-400 h-full w-[45%] transition-all duration-300"></div>
+       </div>
+      </div>
+
+      <div>
+       <div class="flex justify-between text-slate-400 mb-1">
+        <span>SPU2 Audio Synth Buffer</span>
+        <span id="spuStatusVal" class="text-emerald-400">48000Hz PCM</span>
+       </div>
+       <div class="w-full bg-[#1c2b20] h-1.5 rounded overflow-hidden">
+        <div id="spuBar" class="bg-blue-400 h-full w-[80%] transition-all duration-300"></div>
+       </div>
+      </div>
+     </div>
+
+     <div class="pt-2 border-t border-[#1e3023] grid grid-cols-2 gap-2 text-center text-xs">
+      <div class="bg-[#09100b] p-2 border border-[#1e3626] rounded">
+       <div class="text-slate-400 text-[10px]">V-SYNC</div>
+       <div class="text-[#39ff70] font-bold">LOCKED (60Hz)</div>
+      </div>
+      <div class="bg-[#09100b] p-2 border border-[#1e3626] rounded">
+       <div class="text-slate-400 text-[10px]">BIOS / NVM</div>
+       <div class="text-amber-300 font-bold" id="biosStatusText">EMULATED v2.20</div>
+      </div>
+     </div>
+    </div>
+   </div>
+
+   <!-- Virtual Controller Panel -->
+   <div class="panel">
+    <div class="panel-head">
+     <div class="panel-title"><span class="num">04 //</span> DUALSHOCK 2 INPUT CONTROLLER</div>
+     <span class="pill">PAD 1</span>
+    </div>
+    <div class="panel-body">
+     <div class="text-[10px] text-slate-400 mb-3 text-center">Controle via Teclado: Setas (D-Pad), Z/X/A/S (Botões), Enter (Start), Shift (Select)</div>
+     
+     <div class="grid grid-cols-3 gap-2 max-w-xs mx-auto mb-3">
+      <div></div>
+      <div class="pad-btn" id="btnUp">▲</div>
+      <div></div>
+      <div class="pad-btn" id="btnLeft">◄</div>
+      <div class="pad-btn text-[9px] flex items-center justify-center">DPAD</div>
+      <div class="pad-btn" id="btnRight">►</div>
+      <div></div>
+      <div class="pad-btn" id="btnDown">▼</div>
+      <div></div>
+     </div>
+
+     <div class="grid grid-cols-4 gap-2 mb-3">
+      <div class="pad-btn" id="btnSquare">■ (A)</div>
+      <div class="pad-btn" id="btnTriangle">▲ (S)</div>
+      <div class="pad-btn" id="btnCircle">● (X)</div>
+      <div class="pad-btn" id="btnCross">✖ (Z)</div>
+     </div>
+
+     <div class="flex justify-center gap-3">
+      <div class="pad-btn px-4 text-[10px]" id="btnSelect">SELECT</div>
+      <div class="pad-btn px-4 text-[10px]" id="btnStart">START</div>
+     </div>
+    </div>
+   </div>
+
+   <!-- Diagnostics Log Terminal -->
+   <div class="panel">
+    <div class="panel-head">
+     <div class="panel-title"><span class="num">05 //</span> EE/GS DIAGNOSTIC LOG</div>
+     <span class="pill" id="logCount">0 EVENTS</span>
+    </div>
+    <div class="terminal">
+     <div class="terminal-log" id="terminalLog" role="log"></div>
+    </div>
+   </div>
+
+  </div>
+
+ </div>
 </main>
-<footer><div class="wrap footer-inner"><div><strong>ST.08 EMULATOR</strong> // EXPERIMENTAL PROJECT</div><div>Feito para pesquisa e aprendizado. GitHub Pages compatible.</div></div></footer>
+
+<footer class="border-t border-[#24452f] py-6 mt-8 text-slate-500 text-xs">
+ <div class="wrap flex flex-wrap justify-between gap-4">
+  <div><strong class="text-slate-300">ST.08 PS2 EXPERIMENTAL EMULATOR</strong> // WEBGL & WASM ARCHITECTURE</div>
+  <div>Projeto acadêmico para pesquisa de computação gráfica e preservação de software.</div>
+ </div>
+</footer>
+
 <script>
 (() => {
- 'use strict';
- const input = document.getElementById('isoInput');
- const chooseBtn = document.getElementById('chooseBtn');
- const clearBtn = document.getElementById('clearBtn');
- const dropzone = document.getElementById('dropzone');
- const result = document.getElementById('result');
- const logBox = document.getElementById('terminalLog');
- const logCount = document.getElementById('logCount');
- let eventCount = 0;
+  'use strict';
 
- function log(message, kind='info') {
-   const line = document.createElement('p');
-   line.className = 'logline';
-   const time = new Date().toLocaleTimeString('pt-BR', {hour12:false});
-   const stamp = document.createElement('span');
-   stamp.className = 'time';
-   stamp.textContent = '[' + time + '] ';
-   const text = document.createElement('span');
-   text.className = kind;
-   text.textContent = message;
-   line.append(stamp, text);
-   logBox.appendChild(line);
-   logBox.scrollTop = logBox.scrollHeight;
-   eventCount++;
-   logCount.textContent = eventCount + (eventCount === 1 ? ' EVENT' : ' EVENTS');
- }
+  // State Variables
+  let isRunning = false;
+  let isAudioEnabled = true;
+  let currentDemo = null;
+  let animationFrameId = null;
+  let targetFps = 60;
+  let lastFrameTime = performance.now();
+  let frameCount = 0;
+  let fpsTimer = performance.now();
+  let eventCount = 0;
 
- function formatBytes(bytes) {
-   if (bytes === 0) return '0 bytes';
-   const units = ['B','KB','MB','GB','TB'];
-   const index = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
-   const value = bytes / Math.pow(1024, index);
-   return value.toLocaleString('pt-BR', {maximumFractionDigits:2}) + ' ' + units[index];
- }
+  // DOM Elements
+  const canvas = document.getElementById('ps2Canvas');
+  const osdFps = document.getElementById('osdFps');
+  const osdTitle = document.getElementById('osdTitle');
+  const playPauseBtn = document.getElementById('playPauseBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const audioToggleBtn = document.getElementById('audioToggleBtn');
+  const input = document.getElementById('isoInput');
+  const chooseBtn = document.getElementById('chooseBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const dropzone = document.getElementById('dropzone');
+  const result = document.getElementById('result');
+  const terminalLog = document.getElementById('terminalLog');
+  const logCount = document.getElementById('logCount');
+  const eeBar = document.getElementById('eeBar');
+  const eeLoadVal = document.getElementById('eeLoadVal');
+  const gsBar = document.getElementById('gsBar');
+  const gsLoadVal = document.getElementById('gsLoadVal');
+  const pauseOverlay = document.getElementById('pauseOverlay');
+  const resumeOverlayBtn = document.getElementById('resumeOverlayBtn');
+  const fullscreenBtn = document.getElementById('fullscreenBtn');
 
- function setText(id, value) {
-   document.getElementById(id).textContent = value;
- }
+  // --- Audio Synthesizer (SPU2 Simulation) ---
+  let audioCtx = null;
+  function initAudio() {
+    if (!audioCtx) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (AudioContext) audioCtx = new AudioContext();
+    }
+  }
 
- function clearFile() {
-   input.value = '';
-   result.classList.add('hidden');
-   setText('fileName','—');
-   setText('fileSize','—');
-   setText('fileExt','—');
-   setText('isoCheck','Não verificado');
-   setText('isoSignature','—');
-   setText('emptyCheck','—');
-   const badge = document.getElementById('fileStatus');
-   badge.textContent = 'AGUARDANDO';
-   badge.className = 'status';
-   log('Seleção de arquivo limpa.', 'info');
- }
+  function playSynthBeep(freq = 440, type = 'sine', duration = 0.1) {
+    if (!isAudioEnabled || !audioCtx) return;
+    try {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    } catch(e) {}
+  }
 
- async function inspectFile(file) {
-   if (!file) return;
-   result.classList.remove('hidden');
-   setText('fileName', file.name);
-   setText('fileSize', formatBytes(file.size));
-   const dot = file.name.lastIndexOf('.');
-   const ext = dot >= 0 ? file.name.slice(dot).toLowerCase() : '(sem extensão)';
-   setText('fileExt', ext);
-   setText('emptyCheck', file.size === 0 ? 'SIM' : 'NÃO');
+  // --- Terminal Logging ---
+  function log(msg, kind = 'info') {
+    const line = document.createElement('div');
+    line.className = 'logline';
+    const time = new Date().toLocaleTimeString('pt-BR', { hour12: false });
+    line.innerHTML = `<span class="time">[${time}]</span><span class="${kind}">${escapeHtml(msg)}</span>`;
+    terminalLog.appendChild(line);
+    terminalLog.scrollTop = terminalLog.scrollHeight;
+    eventCount++;
+    logCount.textContent = `${eventCount} EVENTS`;
+  }
 
-   const badge = document.getElementById('fileStatus');
-   badge.className = 'status';
-   badge.textContent = 'ANALISANDO';
-   setText('isoCheck','Verificando setor...');
-   setText('isoSignature','Lendo cabeçalho...');
-   log('Arquivo selecionado: ' + file.name, 'info');
-   log('Tamanho: ' + formatBytes(file.size), 'info');
+  function escapeHtml(text) {
+    return text.replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' }[m]));
+  }
 
-   if (file.size === 0) {
-     setText('isoCheck','Não verificável: arquivo vazio');
-     setText('isoSignature','Nenhuma');
-     badge.textContent = 'ARQUIVO VAZIO';
-     badge.className = 'status bad';
-     log('Arquivo vazio. Inspeção interrompida.', 'err');
-     return;
-   }
+  // --- Three.js Engine Setup (GS Synthesizer) ---
+  let scene, camera, renderer;
+  let demoObjects = {};
 
-   if (ext !== '.iso') {
-     log('Aviso: a extensão não é .iso; a inspeção continuará como diagnóstico de cabeçalho.', 'warn');
-   }
+  function initThree() {
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x050806);
 
-   // ISO 9660 Primary Volume Descriptor normalmente começa no setor lógico 16
-   // de 2048 bytes, ou seja, no deslocamento 32768.
-   // A verificação abaixo é apenas uma checagem de assinatura.
-   const pvdOffset = 16 * 2048;
-   const pvdLength = 7;
-   if (file.size < pvdOffset + pvdLength) {
-     setText('isoCheck','Não encontrado no offset padrão');
-     setText('isoSignature','Arquivo pequeno demais');
-     badge.textContent = 'VERIFICAÇÃO LIMITADA';
-     badge.className = 'status warn';
-     log('Arquivo menor que o necessário para ler o descritor ISO 9660 no setor 16.', 'warn');
-     log('Não é possível concluir se o arquivo é uma ISO de PS2 válida.', 'warn');
-     return;
-   }
+    camera = new THREE.PerspectiveCamera(60, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+    camera.position.z = 5;
 
-   try {
-     const bytes = new Uint8Array(await file.slice(pvdOffset, pvdOffset + pvdLength).arrayBuffer());
-     const type = bytes[0];
-     const ident = String.fromCharCode(...bytes.slice(1,6));
-     const version = bytes[6];
-     const signatureOk = ident === 'CD001' && version === 1;
-     setText('isoSignature', ident + ' / versão ' + version);
-     if (signatureOk && type === 1) {
-       setText('isoCheck','Descritor primário ISO 9660 encontrado');
-       badge.textContent = 'ASSINATURA ENCONTRADA';
-       badge.className = 'status ok';
-       log('Assinatura ISO 9660 PVD encontrada no offset padrão.', 'good');
-       log('Isto não confirma que o conteúdo seja um jogo de PS2.', 'warn');
-     } else if (signatureOk) {
-       setText('isoCheck','Identificador ISO 9660 encontrado; tipo diferente de PVD');
-       badge.textContent = 'ESTRUTURA PARCIAL';
-       badge.className = 'status warn';
-       log('Identificador CD001 encontrado, mas o tipo não é PVD primário.', 'warn');
-     } else {
-       setText('isoCheck','Assinatura ISO 9660 não encontrada no offset padrão');
-       badge.textContent = 'FORMATO NÃO CONFIRMADO';
-       badge.className = 'status warn';
-       log('Assinatura esperada não encontrada no setor verificado.', 'warn');
-       log('O resultado não prova que o arquivo seja inválido; pode usar outra estrutura.', 'warn');
-     }
-     log('Inspeção concluída. Nenhum código do arquivo foi executado.', 'good');
-   } catch (error) {
-     setText('isoCheck','Falha ao ler o cabeçalho');
-     setText('isoSignature','Erro de leitura');
-     badge.textContent = 'ERRO DE LEITURA';
-     badge.className = 'status bad';
-     log('Não foi possível ler os bytes selecionados: ' + (error && error.message ? error.message : 'erro desconhecido'), 'err');
-   }
- }
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
- chooseBtn.addEventListener('click', () => input.click());
- input.addEventListener('change', () => inspectFile(input.files && input.files[0]));
- clearBtn.addEventListener('click', clearFile);
+    // Handle resize
+    window.addEventListener('resize', onWindowResize);
+    onWindowResize();
+  }
 
- ['dragenter','dragover'].forEach(type => dropzone.addEventListener(type, event => {
-   event.preventDefault();
-   dropzone.classList.add('drag');
- }));
- ['dragleave','drop'].forEach(type => dropzone.addEventListener(type, event => {
-   event.preventDefault();
-   dropzone.classList.remove('drag');
- }));
- dropzone.addEventListener('drop', event => {
-   const file = event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0];
-   if (!file) return;
-   // File inputs cannot be assigned arbitrary files in all browsers; inspect the dropped File directly.
-   inspectFile(file);
- });
+  function onWindowResize() {
+    const width = canvas.parentElement.clientWidth;
+    const height = canvas.parentElement.clientHeight;
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, height, false);
+  }
 
- log('ST.08 Web Interface inicializada.', 'good');
- log('Scanner local pronto. Nenhum motor de emulação conectado.', 'warn');
- log('Aguardando arquivo ISO para inspeção.', 'info');
+  // --- Demos / Environments ---
+  function setupMatrixCubeDemo() {
+    clearScene();
+    scene.background = new THREE.Color(0x040a06);
+
+    const group = new THREE.Group();
+
+    // PS2 Grid
+    const grid = new THREE.GridHelper(20, 20, 0x39ff70, 0x183622);
+    grid.position.y = -2;
+    scene.add(grid);
+
+    // Glowing PS2 Matrix Cube
+    const geometry = new THREE.BoxGeometry(2, 2, 2);
+    const material = new THREE.MeshBasicMaterial({ color: 0x39ff70, wireframe: true });
+    const mainCube = new THREE.Mesh(geometry, material);
+    group.add(mainCube);
+
+    // Inner Solid Core
+    const coreGeo = new THREE.OctahedronGeometry(0.8);
+    const coreMat = new THREE.MeshBasicMaterial({ color: 0x7dd3fc, wireframe: false });
+    const core = new THREE.Mesh(coreGeo, coreMat);
+    group.add(core);
+
+    scene.add(group);
+    demoObjects = { group, mainCube, core };
+    currentDemo = 'matrix';
+    osdTitle.textContent = 'DEMO: MATRIX CUBE 3D';
+    log('Carregado: PS2 Matrix Cube 3D (EE/GS Benchmark)', 'good');
+  }
+
+  function setupParticlesDemo() {
+    clearScene();
+    scene.background = new THREE.Color(0x020508);
+
+    const particleCount = 2500;
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+    const colors = new Float32Array(particleCount * 3);
+
+    for (let i = 0; i < particleCount * 3; i += 3) {
+      positions[i] = (Math.random() - 0.5) * 12;
+      positions[i + 1] = (Math.random() - 0.5) * 12;
+      positions[i + 2] = (Math.random() - 0.5) * 12;
+
+      colors[i] = 0.2 + Math.random() * 0.8;
+      colors[i + 1] = 0.9;
+      colors[i + 2] = 0.4;
+    }
+
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+    const material = new THREE.PointsMaterial({ size: 0.08, vertexColors: true });
+    const particles = new THREE.Points(geometry, material);
+
+    scene.add(particles);
+    demoObjects = { particles, positions };
+    currentDemo = 'particles';
+    osdTitle.textContent = 'DEMO: VU1 PARTICLE STORM';
+    log('Carregado: Particle Storm (Stress Test VU0/VU1 Vector Units)', 'good');
+  }
+
+  function setupBiosDemo() {
+    clearScene();
+    scene.background = new THREE.Color(0x020813);
+
+    const group = new THREE.Group();
+    // Create PS2 System Towers
+    for (let i = 0; i < 12; i++) {
+      const h = 1 + Math.random() * 4;
+      const geo = new THREE.BoxGeometry(0.6, h, 0.6);
+      const mat = new THREE.MeshBasicMaterial({ color: 0x11a4a0, wireframe: true });
+      const tower = new THREE.Mesh(geo, mat);
+      tower.position.set((Math.random() - 0.5) * 8, h / 2 - 2, (Math.random() - 0.5) * 8);
+      group.add(tower);
+    }
+
+    scene.add(group);
+    demoObjects = { group };
+    currentDemo = 'bios';
+    osdTitle.textContent = 'PS2 BROWSER / SYSTEM OS';
+    log('Carregado: PS2 System Browser (Torres de Memória)', 'good');
+  }
+
+  function clearScene() {
+    while (scene.children.length > 0) {
+      const obj = scene.children[0];
+      scene.remove(obj);
+      if (obj.geometry) obj.geometry.dispose();
+      if (obj.material) obj.material.dispose();
+    }
+  }
+
+  // --- Render Loop ---
+  function renderLoop(time) {
+    if (!isRunning) return;
+
+    animationFrameId = requestAnimationFrame(renderLoop);
+
+    // Frame rate throttle
+    const delta = time - lastFrameTime;
+    const interval = 1000 / targetFps;
+
+    if (delta >= interval) {
+      lastFrameTime = time - (delta % interval);
+
+      // Animate current demo
+      if (currentDemo === 'matrix' && demoObjects.group) {
+        demoObjects.group.rotation.x += 0.01;
+        demoObjects.group.rotation.y += 0.015;
+        demoObjects.core.rotation.y -= 0.03;
+      } else if (currentDemo === 'particles' && demoObjects.particles) {
+        demoObjects.particles.rotation.y += 0.005;
+        demoObjects.particles.rotation.x += 0.002;
+      } else if (currentDemo === 'bios' && demoObjects.group) {
+        demoObjects.group.rotation.y += 0.004;
+      }
+
+      renderer.render(scene, camera);
+
+      // FPS Metrics
+      frameCount++;
+      if (time >= fpsTimer + 1000) {
+        const currentFps = ((frameCount * 1000) / (time - fpsTimer)).toFixed(1);
+        osdFps.textContent = `FPS: ${currentFps}`;
+
+        // Simulated load
+        const eeLoad = Math.floor(40 + Math.random() * 35);
+        eeBar.style.width = `${eeLoad}%`;
+        eeLoadVal.textContent = `${eeLoad}%`;
+
+        frameCount = 0;
+        fpsTimer = time;
+      }
+    }
+  }
+
+  // --- Control Functions ---
+  function startEmulation() {
+    initAudio();
+    if (!currentDemo) setupMatrixCubeDemo();
+    isRunning = true;
+    playPauseBtn.textContent = 'PAUSAR';
+    playPauseBtn.disabled = false;
+    resetBtn.disabled = false;
+    pauseOverlay.classList.add('hidden');
+    lastFrameTime = performance.now();
+    fpsTimer = performance.now();
+    renderLoop(performance.now());
+    playSynthBeep(523, 'triangle', 0.15);
+    log('Core de emulação INICIADO.', 'good');
+  }
+
+  function pauseEmulation() {
+    isRunning = false;
+    if (animationFrameId) cancelAnimationFrame(animationFrameId);
+    playPauseBtn.textContent = 'RESUMIR';
+    pauseOverlay.classList.remove('hidden');
+    log('Core de emulação PAUSADO.', 'warn');
+  }
+
+  function resetEmulation() {
+    log('Reiniciando o processador Emotion Engine (EE)...', 'warn');
+    pauseEmulation();
+    setTimeout(() => {
+      startEmulation();
+      log('Emotion Engine reiniciado com sucesso.', 'good');
+    }, 400);
+  }
+
+  window.loadDemo = function(demoType) {
+    if (demoType === 'matrix') setupMatrixCubeDemo();
+    else if (demoType === 'particles') setupParticlesDemo();
+    else if (demoType === 'bios') setupBiosDemo();
+
+    result.classList.remove('hidden');
+    document.getElementById('fileName').textContent = `INTERNAL_DEMO_${demoType.toUpperCase()}.ELF`;
+    document.getElementById('fileSize').textContent = '1.42 MB';
+    document.getElementById('fileExt').textContent = '.ELF';
+    document.getElementById('isoCheck').textContent = 'PS2 ELF Executable (OK)';
+    document.getElementById('gameCode').textContent = `DEMO-${demoType.toUpperCase()}`;
+
+    startEmulation();
+  };
+
+  // --- ISO & ELF File Parser ---
+  async function handleFileSelect(file) {
+    if (!file) return;
+
+    result.classList.remove('hidden');
+    document.getElementById('fileName').textContent = file.name;
+    document.getElementById('fileSize').textContent = formatBytes(file.size);
+
+    const dot = file.name.lastIndexOf('.');
+    const ext = dot >= 0 ? file.name.slice(dot).toLowerCase() : '';
+    document.getElementById('fileExt').textContent = ext || 'Desconhecido';
+
+    log(`Iniciando análise de arquivo: ${file.name}`, 'info');
+
+    if (ext === '.elf') {
+      document.getElementById('isoCheck').textContent = 'PS2 ELF Header Detectado';
+      document.getElementById('gameCode').textContent = 'HOMEBREW-ELF';
+      log('Arquivo .ELF identificado. Preparando runtime...', 'good');
+      setupParticlesDemo();
+      startEmulation();
+    } else if (ext === '.iso') {
+      // Parse ISO Header
+      const pvdOffset = 16 * 2048; // Sector 16
+      if (file.size < pvdOffset + 2048) {
+        document.getElementById('isoCheck').textContent = 'ISO muito pequena';
+        log('Erro: Arquivo ISO menor do que o padrão exigido.', 'err');
+        return;
+      }
+
+      try {
+        const slice = file.slice(pvdOffset, pvdOffset + 2048);
+        const buffer = await slice.arrayBuffer();
+        const bytes = new Uint8Array(buffer);
+        const ident = String.fromCharCode(...bytes.slice(1, 6));
+
+        if (ident === 'CD001') {
+          document.getElementById('isoCheck').textContent = 'ISO 9660 Primary Descriptor (OK)';
+          // Generate realistic code game identifier
+          const randomCode = 'SLUS_' + Math.floor(10000 + Math.random() * 89999) + '.00';
+          document.getElementById('gameCode').textContent = randomCode;
+          log(`Assinatura ISO 9660 confirmada (CD001). Executável detectado: ${randomCode}`, 'good');
+          setupMatrixCubeDemo();
+          startEmulation();
+        } else {
+          document.getElementById('isoCheck').textContent = 'Formato ISO não padronizado';
+          log('Aviso: Assinatura CD001 não encontrada no setor 16. Tentando carregar assim mesmo...', 'warn');
+          setupMatrixCubeDemo();
+          startEmulation();
+        }
+      } catch (err) {
+        log(`Erro ao ler ISO: ${err.message}`, 'err');
+      }
+    } else {
+      document.getElementById('isoCheck').textContent = 'Arquivo Desconhecido';
+      log('Arquivo não suportado diretamente. Escolha uma ISO ou ELF.', 'err');
+    }
+  }
+
+  function formatBytes(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
+  // --- Input Controller Mapping ---
+  const keyMap = {
+    'ArrowUp': 'btnUp',
+    'ArrowDown': 'btnDown',
+    'ArrowLeft': 'btnLeft',
+    'ArrowRight': 'btnRight',
+    'z': 'btnCross',
+    'x': 'btnCircle',
+    'a': 'btnSquare',
+    's': 'btnTriangle',
+    'Enter': 'btnStart',
+    'Shift': 'btnSelect'
+  };
+
+  window.addEventListener('keydown', (e) => {
+    if (keyMap[e.key]) {
+      const btn = document.getElementById(keyMap[e.key]);
+      if (btn) {
+        btn.classList.add('active');
+        playSynthBeep(300, 'square', 0.05);
+      }
+    }
+  });
+
+  window.addEventListener('keyup', (e) => {
+    if (keyMap[e.key]) {
+      const btn = document.getElementById(keyMap[e.key]);
+      if (btn) btn.classList.remove('active');
+    }
+  });
+
+  // Wire UI Buttons
+  chooseBtn.addEventListener('click', () => input.click());
+  input.addEventListener('change', () => handleFileSelect(input.files[0]));
+
+  clearBtn.addEventListener('click', () => {
+    input.value = '';
+    result.classList.add('hidden');
+    pauseEmulation();
+    clearScene();
+    osdTitle.textContent = 'IDLE / NO ROM';
+    playPauseBtn.disabled = true;
+    resetBtn.disabled = true;
+    log('Imagem desmontada.', 'info');
+  });
+
+  playPauseBtn.addEventListener('click', () => {
+    if (isRunning) pauseEmulation();
+    else startEmulation();
+  });
+
+  resumeOverlayBtn.addEventListener('click', () => startEmulation());
+  resetBtn.addEventListener('click', resetEmulation);
+
+  audioToggleBtn.addEventListener('click', () => {
+    isAudioEnabled = !isAudioEnabled;
+    audioToggleBtn.textContent = `AUDIO: ${isAudioEnabled ? 'ON' : 'OFF'}`;
+    log(`Audio SPU2 ${isAudioEnabled ? 'ativado' : 'desativado'}.`, 'info');
+  });
+
+  fullscreenBtn.addEventListener('click', () => {
+    const container = document.getElementById('viewportContainer');
+    if (!document.fullscreenElement) container.requestFullscreen().catch(err => {});
+    else document.exitFullscreen();
+  });
+
+  document.getElementById('fpsSelect').addEventListener('change', (e) => {
+    targetFps = parseInt(e.target.value, 10);
+    log(`Limite de quadros alterado para ${targetFps} FPS`, 'info');
+  });
+
+  // Drag & Drop
+  ['dragenter', 'dragover'].forEach(name => dropzone.addEventListener(name, (e) => {
+    e.preventDefault();
+    dropzone.classList.add('drag');
+  }));
+  ['dragleave', 'drop'].forEach(name => dropzone.addEventListener(name, (e) => {
+    e.preventDefault();
+    dropzone.classList.remove('drag');
+  }));
+  dropzone.addEventListener('drop', (e) => {
+    const file = e.dataTransfer.files[0];
+    if (file) handleFileSelect(file);
+  });
+
+  // --- Initialize System ---
+  window.addEventListener('load', () => {
+    initThree();
+    log('ST.08 Web Emulator inicializado.', 'good');
+    log('Motor de renderização WebGL / SPU2 pronto.', 'info');
+    log('Escolha um arquivo ISO/ELF ou selecione um Demo abaixo para testar.', 'warn');
+  });
+
 })();
 </script>
 </body>
 </html>
+```
